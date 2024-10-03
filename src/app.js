@@ -1,25 +1,12 @@
 import express from "express";
 const app = express();
-import { getUserById } from "./config/db";
+import { homeRouter } from "./routes/home.js";
+import { agendaRouter } from "./routes/agenda.js";
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
-app.get("/agenda/:id", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const user = await getUserById(id);
-    console.log(user);
-
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ status: 404, message: "Usuário não existe" });
-    }
-  } catch (error) {
-    res.status(500).json({ status: 500, message: "Erro de conexão ao banco de dados" });
-  }
-});
+app.use("/", homeRouter);
+app.use("/agenda", agendaRouter);
 
 app.listen(PORT, () => {
   console.log(`Server online at http://localhost:${PORT}`);
