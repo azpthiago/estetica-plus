@@ -1,4 +1,4 @@
-const { getUserById, connection } = require("./db");
+import { getUserById, connection } from "./db";
 
 describe("Teste para função getUserById", () => {
   beforeAll(async () => {

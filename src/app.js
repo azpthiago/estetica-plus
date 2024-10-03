@@ -1,8 +1,10 @@
-const express = require("express");
+import express from "express";
 const app = express();
-const { getUserById } = require("./db");
+import { getUserById } from "./config/db";
 
-app.get("/usuarios/:id", async (req, res) => {
+const PORT = process.env.PORT;
+
+app.get("/agenda/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -19,8 +21,8 @@ app.get("/usuarios/:id", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log(`Server online at http://localhost:3000`);
+app.listen(PORT, () => {
+  console.log(`Server online at http://localhost:${PORT}`);
 });
 
-module.exports = { app };
+export default { app };
