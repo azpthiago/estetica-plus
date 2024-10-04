@@ -19,3 +19,14 @@ agendaRouter.get("/:id", async (request, response) => {
     response.status(500).json({ status: 500, message: "Erro de conexão ao banco de dados" });
   }
 });
+
+agendaRouter.post("/novo", async (request, response) => {
+  const { nomePessoa, contatoTelefonico, email, dataAgendamento } = request.body;
+
+  try {
+    const result = await agenda.newAgendamento(nomePessoa, contatoTelefonico, email, dataAgendamento);
+    response.status(201).json(result);
+  } catch (error) {
+    response.status(400).json({ status: 400, message: error.message });
+  }
+});
