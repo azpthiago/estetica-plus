@@ -7,6 +7,18 @@ export const agendaRouter = Express.Router();
 // Instancia a classe da agenda para utilização dos métodos referentes
 const agenda = new Agenda();
 
+// Método de rota POST para criação de novo agendamento
+agendaRouter.post("/", async (request, response) => {
+  const { nomePessoa, contatoTelefonico, email, dataAgendamento } = request.body;
+
+  try {
+    const result = await agenda.newAgendamento(nomePessoa, contatoTelefonico, email, dataAgendamento);
+    response.status(201).json(result);
+  } catch (error) {
+    response.status(400).json({ status: 400, message: error.message });
+  }
+});
+
 // Método de rota GET para busca de usuário por id através de query params da URL
 agendaRouter.get("/:id", async (request, response) => {
   const { id } = request.params;
@@ -26,14 +38,23 @@ agendaRouter.get("/:id", async (request, response) => {
   }
 });
 
-// Método de rota POST para criação de novo agendamento
-agendaRouter.post("/novo", async (request, response) => {
-  const { nomePessoa, contatoTelefonico, email, dataAgendamento } = request.body;
+agendaRouter.get("/", async (request, response) => {
+  // Consulta no banco através da instancia do modulo Agenda
+  const agendamento = await agenda.getAllAgendamentos();
 
+  // Try catch para tratamento de erros e retorno da resposta da API
   try {
-    const result = await agenda.newAgendamento(nomePessoa, contatoTelefonico, email, dataAgendamento);
-    response.status(201).json(result);
+    if (agendamento) {
+      response.json({ status: 200, agendamento });
+    } else {
+      response.status(404).json({ status: 404, message: `Nenhum agendamento encontrado com o ID: ${id}` });
+    }
   } catch (error) {
-    response.status(400).json({ status: 400, message: error.message });
+    response.status(500).json({ status: 500, message: "Erro de conexão ao banco de dados" });
   }
 });
+
+// TODO -> Adicionar rota de UPDATE
+// TODO -> Adicionar rota de DELETE
+// TODO -> Adicionar rota de GET por nome
+// TODO -> Adicionar rota de GET por range de data

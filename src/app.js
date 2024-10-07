@@ -2,7 +2,7 @@ import express from "express";
 import { homeRouter } from "./routes/home.js";
 import { agendaRouter } from "./routes/agenda.js";
 
-const app = express();
+export const app = express();
 
 // Obriga o servidor a utilizar protocolo JSON
 app.use(express.json());
@@ -11,6 +11,4 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configurações dos routers para rotas definidas do projeto
 app.use("/", homeRouter);
-app.use("/agenda", agendaRouter);
-
-export default { app };
+app.use("/api/agenda/v1", agendaRouter);
