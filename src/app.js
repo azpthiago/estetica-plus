@@ -1,17 +1,16 @@
 import express from "express";
-const app = express();
 import { homeRouter } from "./routes/home.js";
 import { agendaRouter } from "./routes/agenda.js";
 
-const PORT = process.env.PORT || 3000;
+const app = express();
 
+// Obriga o servidor a utilizar protocolo JSON
 app.use(express.json());
+// Indica para o Express utilizar a biblioteca QS para parse de requisições
 app.use(express.urlencoded({ extended: true }));
+
+// Configurações dos routers para rotas definidas do projeto
 app.use("/", homeRouter);
 app.use("/agenda", agendaRouter);
-
-app.listen(PORT, () => {
-  console.log(`Server online at http://localhost:${PORT}`);
-});
 
 export default { app };

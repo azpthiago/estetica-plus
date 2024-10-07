@@ -1,4 +1,4 @@
-import { getUserById, connection } from "./db";
+import { getUserById, connection } from "../src/config/db.js";
 
 describe("Teste para função getUserById", () => {
   beforeAll(async () => {
