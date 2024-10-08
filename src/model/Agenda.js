@@ -113,7 +113,11 @@ export class Agenda {
         throw new Error("Conexão com o banco de dados não está disponível.");
       }
       // Executar a consulta diretamente no banco
-      const [rows] = await connection.query(`SELECT * FROM ${tabela} WHERE data_agendamento BETWEEN ? AND ?`, [dataInicial, dataFinal]);
+      const [rows] = await connection.query(`SELECT * FROM ${tabela} WHERE DATE(data_agendamento) BETWEEN ? AND ?`, [
+        dataInicial,
+        dataFinal,
+      ]);
+      console.log(rows);
       // Verificar se algum resultado foi encontrado
       if (rows.length === 0) {
         return null; // Retorne null ou algo similar

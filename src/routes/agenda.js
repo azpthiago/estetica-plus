@@ -20,7 +20,7 @@ agendaRouter.post("/", async (request, response) => {
 });
 
 // Método de rota GET para busca de usuário por id através de query params da URL
-agendaRouter.get("/:id", async (request, response) => {
+agendaRouter.get("/id/:id", async (request, response) => {
   const { id } = request.params;
 
   // Consulta no banco através da instancia do modulo Agenda
@@ -77,6 +77,34 @@ agendaRouter.delete("/:id", async (request, response) => {
   }
 });
 
-// TODO -> Adicionar rota de DELETE
-// TODO -> Adicionar rota de GET por nome
-// TODO -> Adicionar rota de GET por range de data
+agendaRouter.get("/nome/:nomePessoa", async (request, response) => {
+  const { nomePessoa } = request.params;
+
+  try {
+    const agendamento = await agenda.getAgendamentoByName(nomePessoa);
+
+    if (agendamento) {
+      response.json({ status: 200, agendamento });
+    } else {
+      response.status(404).json({ status: 404, message: `Nenhum agendamento encontrado com o nome ${nomePessoa}` });
+    }
+  } catch (error) {
+    response.status(500).json({ status: 500, message: "Erro de conexão ao banco de dados" });
+  }
+});
+
+agendaRouter.get("/data", async (request, response) => {
+  const { dataInicial, dataFinal } = request.body;
+
+  try {
+    const agendamentos = await agenda.getAgendamentoByData(dataInicial, dataFinal);
+
+    if (agendamentos) {
+      response.json({ status: 200, agendamentos });
+    } else {
+      response.status(404).json({ status: 404, message: "Nenhum agendamento encontrado nesse intervalo de datas." });
+    }
+  } catch (error) {
+    response.status(500).json({ status: 500, message: "Erro de conexão ao banco de dados." });
+  }
+});
