@@ -3,7 +3,7 @@ import { isValid, parse, format } from "date-fns";
 
 export class Agenda {
   // Método para criar um novo agendamento
-  async newAgendamento(nomePessoa, contatoTelefonico, email, dataAgendamento) {
+  async newAgendamento(nomePessoa, contatoTelefonico, email, dataAgendamento, tabela = "agenda") {
     // Validações básicas de entrada
     if (!nomePessoa || !contatoTelefonico || !email || !dataAgendamento) {
       throw new Error("Todos os campos são obrigatórios.");
@@ -30,18 +30,18 @@ export class Agenda {
       }
       // Inserir os dados no banco, agora com a data formatada corretamente
       const [result] = await connection.query(
-        "INSERT INTO agenda (nome_pessoa, contato_telefonico, email, data_agendamento) VALUES (?, ?, ?, ?)",
+        `INSERT INTO ${tabela} (nome_pessoa, contato_telefonico, email, data_agendamento) VALUES (?, ?, ?, ?)`,
         [nomePessoa, contatoTelefonico, email, mysqlFormattedDate]
       );
       // Retornar o ID do novo agendamento inserido
       return { id_agendamento: result.insertId, message: "Agendamento criado com sucesso." };
     } catch (error) {
       console.error("Erro ao criar o agendamento:", error.message);
-      throw new Error("Erro ao criar o agendamento. Tente novamente mais tarde.");
+      throw new Error(`Erro ao criar o agendamento | ${error.message}. Tente novamente mais tarde.`);
     }
   }
   // Método para buscar um agendamento por ID
-  async getAgendamentoById(id) {
+  async getAgendamentoById(id, tabela = "agenda") {
     const numericId = Number(id);
     // Verificar se o ID é válido
     if (isNaN(numericId) || numericId <= 0) {
@@ -53,7 +53,7 @@ export class Agenda {
         throw new Error("Conexão com o banco de dados não está disponível.");
       }
       // Executar a consulta diretamente no banco
-      const [rows] = await connection.query("SELECT * FROM agenda WHERE id_agenda = ?", [numericId]);
+      const [rows] = await connection.query(`SELECT * FROM ${tabela} WHERE id_agenda = ?`, [numericId]);
       // Verificar se algum resultado foi encontrado
       if (rows.length === 0) {
         return null; // Retorne null ou algo similar
@@ -66,14 +66,14 @@ export class Agenda {
     }
   }
   // Método para buscar um agendamento por ID
-  async getAllAgendamentos() {
+  async getAllAgendamentos(tabela = "agenda") {
     try {
       // Verificar se a conexão está disponível
       if (!connection) {
         throw new Error("Conexão com o banco de dados não está disponível.");
       }
       // Executar a consulta diretamente no banco
-      const [rows] = await connection.query("SELECT * FROM agenda");
+      const [rows] = await connection.query(`SELECT * FROM ${tabela}`);
       // Verificar se algum resultado foi encontrado
       if (rows.length === 0) {
         return null; // Retorne null ou algo similar
@@ -86,14 +86,14 @@ export class Agenda {
     }
   }
   // Método para buscar um agendamento por nome da pessoa
-  async getAgendamentoByName(nomePessoa) {
+  async getAgendamentoByName(nomePessoa, tabela = "agenda") {
     try {
       // Verificar se a conexão está disponível
       if (!connection) {
         throw new Error("Conexão com o banco de dados não está disponível.");
       }
       // Executar a consulta diretamente no banco
-      const [rows] = await connection.query("SELECT * FROM agenda WHERE nome_pessoa = ?", [nomePessoa]);
+      const [rows] = await connection.query(`SELECT * FROM ${tabela} WHERE nome_pessoa = ?`, [nomePessoa]);
       // Verificar se algum resultado foi encontrado
       if (rows.length === 0) {
         return null; // Retorne null ou algo similar
@@ -106,14 +106,14 @@ export class Agenda {
     }
   }
   // Método para buscar um agendamento por range de datas
-  async getAgendamentoByData(dataInicial, dataFinal) {
+  async getAgendamentoByData(dataInicial, dataFinal, tabela = "agenda") {
     try {
       // Verificar se a conexão está disponível
       if (!connection) {
         throw new Error("Conexão com o banco de dados não está disponível.");
       }
       // Executar a consulta diretamente no banco
-      const [rows] = await connection.query("SELECT * FROM agenda WHERE data_agendamento BETWEEN ? AND ?", [dataInicial, dataFinal]);
+      const [rows] = await connection.query(`SELECT * FROM ${tabela} WHERE data_agendamento BETWEEN ? AND ?`, [dataInicial, dataFinal]);
       // Verificar se algum resultado foi encontrado
       if (rows.length === 0) {
         return null; // Retorne null ou algo similar
@@ -126,7 +126,7 @@ export class Agenda {
     }
   }
   // Método para atualizar um agendamento existente
-  async updateAgendamento(id, nomePessoa, contatoTelefonico, email, dataAgendamento) {
+  async updateAgendamento(id, nomePessoa, contatoTelefonico, email, dataAgendamento, tabela = "agenda") {
     const beforeUser = this.getAgendamentoById(id);
 
     // Verifica se o agendamento existe antes de tentar atualizar
@@ -160,7 +160,7 @@ export class Agenda {
       }
       // Inserir os dados no banco, agora com a data formatada corretamente
       const [result] = await connection.query(
-        "UPDATE agenda SET nome_pessoa = ?, contato_telefonico = ?, email = ?, data_agendamento = ? WHERE id_agenda = ?",
+        `UPDATE ${tabela} SET nome_pessoa = ?, contato_telefonico = ?, email = ?, data_agendamento = ? WHERE id_agenda = ?`,
         [nomePessoa, contatoTelefonico, email, mysqlFormattedDate, id]
       );
 
@@ -176,20 +176,20 @@ export class Agenda {
     }
   }
   // Método para deletar um agendamento existente
-  async deleteAgendamento(id) {
+  async deleteAgendamento(id, tabela = "agenda") {
     try {
       if (!connection) {
         throw new Error("Conexão com o banco de dados não está disponível.");
       }
 
       // Verifica se o agendamento existe antes de tentar deletar
-      const agendamentoExistente = await this.getAgendamentoById(id);
+      const agendamentoExistente = await this.getAgendamentoById(id, tabela);
       if (!agendamentoExistente) {
         throw new Error("Agendamento não encontrado.");
       }
 
       // Executa a query de delete
-      const [result] = await connection.query("DELETE FROM agenda WHERE id_agenda = ?", [id]);
+      const [result] = await connection.query(`DELETE FROM ${tabela} WHERE id_agenda = ?`, [id]);
 
       if (result.affectedRows === 0) {
         throw new Error("Nenhum agendamento foi deletado.");
@@ -198,7 +198,7 @@ export class Agenda {
       return { message: "Agendamento deletado com sucesso." };
     } catch (error) {
       console.error("Erro ao deletar o agendamento:", error.message);
-      throw new Error("Erro ao deletar o agendamento. Tente novamente mais tarde.");
+      throw new Error(`Erro ao deletar o agendamento ${error.message}. Tente novamente mais tarde.`);
     }
   }
 }

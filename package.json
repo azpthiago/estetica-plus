@@ -21,13 +21,5 @@
     "@babel/preset-env": "^7.25.7",
     "babel-jest": "^29.7.0",
     "dotenv": "^16.4.5"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.[t|j]sx?$": "babel-jest"
-    },
-    "extensionsToTreatAsEsm": [
-      ".js"
-    ]
   }
 }
