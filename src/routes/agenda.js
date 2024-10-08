@@ -54,7 +54,29 @@ agendaRouter.get("/", async (request, response) => {
   }
 });
 
-// TODO -> Adicionar rota de UPDATE
+agendaRouter.put("/:id", async (request, response) => {
+  const { id } = request.params;
+  const { nomePessoa, contatoTelefonico, email, dataAgendamento } = request.body;
+
+  try {
+    const result = await agenda.updateAgendamento(id, nomePessoa, contatoTelefonico, email, dataAgendamento);
+    response.json({ status: 200, message: "Agendamento atualizado com sucesso.", result });
+  } catch (error) {
+    response.status(400).json({ status: 400, message: error.message });
+  }
+});
+
+agendaRouter.delete("/:id", async (request, response) => {
+  const { id } = request.params;
+
+  try {
+    const result = await agenda.deleteAgendamento(id);
+    response.json({ status: 200, message: result.message });
+  } catch (error) {
+    response.status(400).json({ status: 400 });
+  }
+});
+
 // TODO -> Adicionar rota de DELETE
 // TODO -> Adicionar rota de GET por nome
 // TODO -> Adicionar rota de GET por range de data
