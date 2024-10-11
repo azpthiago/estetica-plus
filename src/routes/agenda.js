@@ -55,9 +55,12 @@ agendaRouter.get("/", async (request, response) => {
 });
 
 agendaRouter.put("/:id", async (request, response) => {
+  // Captura de parâmetos de requisição
   const { id } = request.params;
+  // Captura de valores vindo através do body
   const { nomePessoa, contatoTelefonico, email, dataAgendamento } = request.body;
 
+  // Try Catch de execução da query no banco e resposta do servidor
   try {
     const result = await agenda.updateAgendamento(id, nomePessoa, contatoTelefonico, email, dataAgendamento);
     response.json({ status: 200, message: "Agendamento atualizado com sucesso.", result });
@@ -67,8 +70,10 @@ agendaRouter.put("/:id", async (request, response) => {
 });
 
 agendaRouter.delete("/:id", async (request, response) => {
+  // Captura de parâmetro de requisição
   const { id } = request.params;
 
+  // Try Catch de execução da query no banco e resposta do servidor
   try {
     const result = await agenda.deleteAgendamento(id);
     response.json({ status: 200, message: result.message });
@@ -78,8 +83,10 @@ agendaRouter.delete("/:id", async (request, response) => {
 });
 
 agendaRouter.get("/nome/:nomePessoa", async (request, response) => {
+  // Captura de parâmetro de requisição
   const { nomePessoa } = request.params;
 
+  // Try Catch de execução da query no banco e resposta do servidor
   try {
     const agendamento = await agenda.getAgendamentoByName(nomePessoa);
 
@@ -94,8 +101,10 @@ agendaRouter.get("/nome/:nomePessoa", async (request, response) => {
 });
 
 agendaRouter.get("/data", async (request, response) => {
+  // Captura de valores de datas através do body
   const { dataInicial, dataFinal } = request.body;
 
+  // Try Catch de execução da query no banco e resposta do servidor
   try {
     const agendamentos = await agenda.getAgendamentoByData(dataInicial, dataFinal);
 

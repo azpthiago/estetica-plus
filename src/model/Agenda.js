@@ -17,7 +17,7 @@ export class Agenda {
     if (contatoTelefonico.length < 10) {
       throw new Error("Número de telefone inválido.");
     }
-    // Validação da data no formato brasileiro usando date-fns
+    // Validação da data no formato brasvdasileiro usando date-fns
     const parsedDate = parse(dataAgendamento, "dd/MM/yyyy", new Date());
     if (!isValid(parsedDate)) {
       throw new Error("Data de agendamento inválida.");
@@ -181,7 +181,9 @@ export class Agenda {
   }
   // Método para deletar um agendamento existente
   async deleteAgendamento(id, tabela = "agenda") {
+    // Try Catch de execução da query no banco
     try {
+      // Valida se a conexão com o banco esta disponivel
       if (!connection) {
         throw new Error("Conexão com o banco de dados não está disponível.");
       }
